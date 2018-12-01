@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Labirynt.Player;
+using System.Windows;
 
 namespace Labirynt
 {
@@ -7,7 +8,14 @@ namespace Labirynt
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Player player;
-        public MainWindow() => InitializeComponent();
+        private MyPlayer player;
+        private static readonly int TileSize = 10;
+
+        public MainWindow() => InitializeComponent();//InitializeBoard();
+
+        private void InitializeBoard()
+        {
+            //TODO
+        }
     }
 }
