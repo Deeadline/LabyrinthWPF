@@ -15,13 +15,19 @@ namespace Labirynt.Elements
         private int boardWidth;
         private int boardHeight;
 
-        public Player(int boardWidthParam, int boardHeightParam)
+        private Coordinate goal;
+        private List<Coordinate> obstaclePositions;
+
+        public Player(Level level)
         {
             PlayerRectangle = new Rectangle();
             PlayerRectangle.Fill = Brushes.Orange;
 
-            this.boardWidth = boardWidthParam;
-            this.boardHeight = boardHeightParam;
+            this.obstaclePositions = level.ObstaclePositions;
+            this.goal = level.EndPosition;
+
+            this.boardWidth = level.SizeX;
+            this.boardHeight = level.SizeY;
         }
 
         public void Move(int dirX,int dirY)
@@ -29,11 +35,26 @@ namespace Labirynt.Elements
             int rowToSet = Grid.GetRow(PlayerRectangle) + dirY;
             int colToSet = Grid.GetColumn(PlayerRectangle) + dirX;
 
-            if (colToSet >= 0 && colToSet < boardWidth)
-                Grid.SetColumn(PlayerRectangle, Grid.GetColumn(PlayerRectangle) + dirX);
+            if (colToSet < 0 || colToSet >= boardWidth)
+                return;
 
-            if (rowToSet >= 0 && rowToSet < boardHeight)
-                    Grid.SetRow(PlayerRectangle, Grid.GetRow(PlayerRectangle) + dirY);
+            if (rowToSet < 0 || rowToSet >= boardHeight)
+                return;
+
+            for(int i = 0;i < obstaclePositions.Count;i++)
+            {
+                if (obstaclePositions[i].X == colToSet && obstaclePositions[i].Y == rowToSet)
+                    return;
+            }
+
+            Grid.SetColumn(PlayerRectangle, colToSet);
+            Grid.SetRow(PlayerRectangle, rowToSet);
+
+
+            if (colToSet == goal.X && rowToSet == goal.Y)
+            {
+                System.Diagnostics.Debug.WriteLine("Level finished");
+            }
         }
     }
 }
