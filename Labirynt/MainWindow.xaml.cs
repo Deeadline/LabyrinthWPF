@@ -10,9 +10,6 @@ namespace Labirynt
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int BoardWidth = 16;
-        private int BoardHeight = 16;
-
         private Player player;
 
         private Level CurrentLevel;
@@ -20,18 +17,23 @@ namespace Labirynt
         public MainWindow()
         {
             InitializeComponent();
-            InitializeBoard();
-            CurrentLevel = Level.FromTxt("SampleLevel.txt");
 
-            InitializeObstacles();
-            InitializePlayer();
+            InitializeLevel();
 
             this.KeyDown += MainWindow_KeyDown;
         }
 
+        private void InitializeLevel()
+        {
+            CurrentLevel = Level.FromTxt("SampleLevel.txt");
+            InitializeObstacles();
+            InitializeBoard();
+            InitializePlayer();
+        }
+
         private void InitializePlayer()
         {        
-            player = new Player(BoardWidth,BoardHeight);
+            player = new Player(CurrentLevel);
             Grid.Children.Add(player.PlayerRectangle);
             Grid.SetColumn(player.PlayerRectangle, CurrentLevel.StartPosition.X);
             Grid.SetRow(player.PlayerRectangle, CurrentLevel.StartPosition.Y);
@@ -41,7 +43,6 @@ namespace Labirynt
         {
             for (int i = 0;i < CurrentLevel.ObstaclePositions.Count;i++)
             {
-            
                 Obstacle obs = new Obstacle(CurrentLevel.ObstaclePositions[i].X,
                     CurrentLevel.ObstaclePositions[i].Y);
                 Grid.Children.Add(obs.obstacleRect);
@@ -72,15 +73,10 @@ namespace Labirynt
 
         private void InitializeBoard()
         {
-            for(int i = 0;i < BoardWidth;i++)
-            {
+            for(int i = 0;i <= CurrentLevel.SizeX;i++)
                 Grid.RowDefinitions.Add(new RowDefinition()); 
-            }
-
-            for (int i = 0; i < BoardHeight; i++)
-            {
+            for (int i = 0; i <= CurrentLevel.SizeY; i++)
                 Grid.ColumnDefinitions.Add(new ColumnDefinition());
-            }
         }
     }
 }
