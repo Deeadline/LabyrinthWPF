@@ -1,8 +1,10 @@
-﻿using Labirynt.Elements;
+﻿using System.Linq;
+using Labirynt.Elements;
+using Labirynt.Elements.Utils;
+using Labirynt.Factory;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Labirynt
 {
@@ -11,72 +13,84 @@ namespace Labirynt
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Player _player;
+        private Player player;
 
-        private Level _currentLevel;
+        private Maze maze;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            InitializeLevel();
+            Initialize();
 
             KeyDown += MainWindow_KeyDown;
         }
 
-        private void InitializeLevel()
+        private void Initialize()
         {
-            _currentLevel = Level.GenerateLevel("SampleLevel.txt");
-            InitializeObstacles();
+            var values = Level.CreateMaze("SampleLevel.txt");
+            maze = values.Item1;
+            player = values.Item2;
+
+            InitializeElements();
             InitializeBoard();
             InitializePlayer();
         }
 
         private void InitializePlayer()
         {
-            _player = new Player(_currentLevel);
-            Grid.Children.Add(_player.PlayerRepresentation.Rectangle);
-            Grid.SetColumn(_player.PlayerRepresentation.Rectangle, _player.PlayerRepresentation.Position.X);
-            Grid.SetRow(_player.PlayerRepresentation.Rectangle, _player.PlayerRepresentation.Position.Y);
+            Grid.Children.Add(player.GraphicRepresentation.Rectangle);
+            Grid.SetColumn(player.GraphicRepresentation.Rectangle, player.GraphicRepresentation.Position.X);
+            Grid.SetRow(player.GraphicRepresentation.Rectangle, player.GraphicRepresentation.Position.Y);
         }
 
-        private void InitializeObstacles()
+        private void InitializeElements()
         {
-            foreach (var obstaclePosition in _currentLevel.ObstaclePositions)
+            foreach (var element in maze.Elements)
             {
-                var obstacle = new Obstacle(obstaclePosition, Brushes.Black);
-                Grid.Children.Add(obstacle.ObstacleGraphicRepresentation.Rectangle);
-                Grid.SetColumn(obstacle.ObstacleGraphicRepresentation.Rectangle, obstacle.ObstacleGraphicRepresentation.Position.X);
-                Grid.SetRow(obstacle.ObstacleGraphicRepresentation.Rectangle, obstacle.ObstacleGraphicRepresentation.Position.Y);
+                Grid.Children.Add(element.GraphicRepresentation.Rectangle);
+                Grid.SetColumn(element.GraphicRepresentation.Rectangle, element.GraphicRepresentation.Position.X);
+                Grid.SetRow(element.GraphicRepresentation.Rectangle, element.GraphicRepresentation.Position.Y);
             }
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
+            Coordinate coordinate;
             if (e.Key == Key.W)
             {
-                _player.Move(new Coordinate(0, -1));
+                coordinate = player.GetMoveCoordinates(0, -1);
+                if(!player.Collider.CheckCollision(maze.Elements.Where(w=>w is Wall).ToList(), maze.MazeSize))
+                    player.Move(coordinate);
             }
             else if (e.Key == Key.A)
             {
-                _player.Move(new Coordinate(-1, 0));
+                coordinate = player.GetMoveCoordinates(-1,0);
+                if (!player.Collider.CheckCollision(maze.Elements.Where(w => w is Wall).ToList(), maze.MazeSize))
+                    player.Move(coordinate);
             }
             else if (e.Key == Key.S)
             {
-                _player.Move(new Coordinate(0, 1));
+                coordinate = player.GetMoveCoordinates(0, 1);
+                if (!player.Collider.CheckCollision(maze.Elements.Where(w => w is Wall).ToList(), maze.MazeSize))
+                    player.Move(coordinate);
             }
             else if (e.Key == Key.D)
             {
-                _player.Move(new Coordinate(1, 0));
+                coordinate = player.GetMoveCoordinates(1,0);
+                if (!player.Collider.CheckCollision(maze.Elements.Where(w => w is Wall).ToList(), maze.MazeSize))
+                    player.Move(coordinate);
             }
+            player.Redraw();
         }
 
         private void InitializeBoard()
         {
-            for (var i = 0; i < _currentLevel.LevelDimension.Width; i++)
-                Grid.ColumnDefinitions.Add(new ColumnDefinition());
-            for (var i = 0; i < _currentLevel.LevelDimension.Height; i++)
+            for (var i = 0; i < maze.MazeSize.X; i++)
                 Grid.RowDefinitions.Add(new RowDefinition());
+
+            for (var i = 0; i < maze.MazeSize.Y; i++)
+                Grid.ColumnDefinitions.Add(new ColumnDefinition());
         }
     }
 }

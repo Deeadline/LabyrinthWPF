@@ -1,4 +1,4 @@
-﻿namespace Labirynt.Elements
+﻿namespace Labirynt.Elements.Utils
 {
     public class Coordinate
     {

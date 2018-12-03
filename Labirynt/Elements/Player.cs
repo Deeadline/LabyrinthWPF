@@ -1,66 +1,40 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using Labirynt.Elements.Utils;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Labirynt.Elements
 {
-    public class Player
+    public class Player : MazeElement
     {
-        public GraphicRepresentation PlayerRepresentation { get; set; }
-        public Dimension LevelDimension { get; set; }
-        private readonly Coordinate _goal;
-        private readonly List<Coordinate> _obstaclePositions;
-
-        public Player(Level level)
+        public Collision Collider { get; set; }
+        public override MazeElement Make(Coordinate coordinate)
         {
-            PlayerRepresentation = new GraphicRepresentation(level.StartPosition, Brushes.DarkOrange);
-            LevelDimension = level.LevelDimension;
-            _obstaclePositions = level.ObstaclePositions;
-            _goal = level.EndPosition;
+            return new Player
+            {
+                GraphicRepresentation = new GraphicRepresentation(coordinate, Brushes.DarkOrange),
+                Collider = new Collision()
+            };
+        }
+
+        public Coordinate GetMoveCoordinates(int x, int y)
+        {
+            var colToSet = Grid.GetColumn(GraphicRepresentation.Rectangle) + x;
+            var rowToSet = Grid.GetRow(GraphicRepresentation.Rectangle) + y;
+            Collider.Coordinate = new Coordinate(colToSet,rowToSet);
+            return Collider.Coordinate;
         }
 
         public void Move(Coordinate moveCoordinate)
         {
-
-            var rowToSet = Grid.GetRow(PlayerRepresentation.Rectangle) + moveCoordinate.Y;
-            var colToSet = Grid.GetColumn(PlayerRepresentation.Rectangle) + moveCoordinate.X;
-
-            //Collision
-            if (CheckCollision(colToSet, rowToSet))
-                return;
-            PlayerRepresentation.Position.X = colToSet;
-            PlayerRepresentation.Position.Y = rowToSet;
-            //If not set new position
-            Redraw();
-
-            //Check if win
-            CheckWin(colToSet, rowToSet);
+            GraphicRepresentation.Position = moveCoordinate;
         }
 
-        private void Redraw()
+        public void Redraw()
         {
-            Grid.SetColumn(PlayerRepresentation.Rectangle, PlayerRepresentation.Position.X);
-            Grid.SetRow(PlayerRepresentation.Rectangle, PlayerRepresentation.Position.Y);
+            Grid.SetColumn(GraphicRepresentation.Rectangle, GraphicRepresentation.Position.X);
+            Grid.SetRow(GraphicRepresentation.Rectangle, GraphicRepresentation.Position.Y);
         }
 
-        private bool CheckCollision(int x, int y)
-        {
-            if (x < 0 || x >= LevelDimension.Width)
-                return true;
-
-            if (y < 0 || y >= LevelDimension.Height)
-                return true;
-            var f = _obstaclePositions.Any(t => t.X == x && t.Y == y);
-            return f;
-        }
-
-        private void CheckWin(int x, int y)
-        {
-            if (x == _goal.X && y == _goal.Y)
-            {
-                System.Diagnostics.Debug.WriteLine("Level finished");
-            }
-        }
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace Labirynt.Elements
+﻿namespace Labirynt.Elements.Utils
 {
     public class Dimension
     {
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int Width { get; protected set; }
+        public int Height { get; protected set; }
 
         public Dimension(int width, int height)
         {
