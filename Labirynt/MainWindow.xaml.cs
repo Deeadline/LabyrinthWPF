@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Labirynt
 {
@@ -10,9 +11,9 @@ namespace Labirynt
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Player player;
+        private Player _player;
 
-        private Level CurrentLevel;
+        private Level _currentLevel;
 
         public MainWindow()
         {
@@ -20,63 +21,62 @@ namespace Labirynt
 
             InitializeLevel();
 
-            this.KeyDown += MainWindow_KeyDown;
+            KeyDown += MainWindow_KeyDown;
         }
 
         private void InitializeLevel()
         {
-            CurrentLevel = Level.FromTxt("SampleLevel.txt");
+            _currentLevel = Level.GenerateLevel("SampleLevel.txt");
             InitializeObstacles();
             InitializeBoard();
             InitializePlayer();
         }
 
         private void InitializePlayer()
-        {        
-            player = new Player(CurrentLevel);
-            Grid.Children.Add(player.PlayerRectangle);
-            Grid.SetColumn(player.PlayerRectangle, CurrentLevel.StartPosition.X);
-            Grid.SetRow(player.PlayerRectangle, CurrentLevel.StartPosition.Y);
+        {
+            _player = new Player(_currentLevel);
+            Grid.Children.Add(_player.PlayerRepresentation.Rectangle);
+            Grid.SetColumn(_player.PlayerRepresentation.Rectangle, _player.PlayerRepresentation.Position.X);
+            Grid.SetRow(_player.PlayerRepresentation.Rectangle, _player.PlayerRepresentation.Position.Y);
         }
 
         private void InitializeObstacles()
         {
-            for (int i = 0;i < CurrentLevel.ObstaclePositions.Count;i++)
+            foreach (var obstaclePosition in _currentLevel.ObstaclePositions)
             {
-                Obstacle obs = new Obstacle(CurrentLevel.ObstaclePositions[i].X,
-                    CurrentLevel.ObstaclePositions[i].Y);
-                Grid.Children.Add(obs.obstacleRect);
-                Grid.SetColumn(obs.obstacleRect, obs.X);
-                Grid.SetRow(obs.obstacleRect, obs.Y);
+                var obstacle = new Obstacle(obstaclePosition, Brushes.Black);
+                Grid.Children.Add(obstacle.ObstacleGraphicRepresentation.Rectangle);
+                Grid.SetColumn(obstacle.ObstacleGraphicRepresentation.Rectangle, obstacle.ObstacleGraphicRepresentation.Position.X);
+                Grid.SetRow(obstacle.ObstacleGraphicRepresentation.Rectangle, obstacle.ObstacleGraphicRepresentation.Position.Y);
             }
         }
 
-        private void MainWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.W)
+            if (e.Key == Key.W)
             {
-                player.Move(0, -1);
+                _player.Move(new Coordinate(0, -1));
             }
-            else if(e.Key == Key.A)
+            else if (e.Key == Key.A)
             {
-                player.Move(-1, 0);
+                _player.Move(new Coordinate(-1, 0));
             }
             else if (e.Key == Key.S)
             {
-                player.Move(0, 1);
+                _player.Move(new Coordinate(0, 1));
             }
             else if (e.Key == Key.D)
             {
-                player.Move(1, 0);
+                _player.Move(new Coordinate(1, 0));
             }
         }
 
         private void InitializeBoard()
         {
-            for(int i = 0;i <= CurrentLevel.SizeX;i++)
-                Grid.RowDefinitions.Add(new RowDefinition()); 
-            for (int i = 0; i <= CurrentLevel.SizeY; i++)
+            for (var i = 0; i < _currentLevel.LevelDimension.Width; i++)
                 Grid.ColumnDefinitions.Add(new ColumnDefinition());
+            for (var i = 0; i < _currentLevel.LevelDimension.Height; i++)
+                Grid.RowDefinitions.Add(new RowDefinition());
         }
     }
 }

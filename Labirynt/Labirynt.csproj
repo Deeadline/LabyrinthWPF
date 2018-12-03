@@ -65,6 +65,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Elements\Coordinate.cs" />
+    <Compile Include="Elements\Dimension.cs" />
+    <Compile Include="Elements\GraphicRepresentation.cs" />
     <Compile Include="Elements\Level.cs" />
     <Compile Include="Elements\Obstacle.cs" />
     <Compile Include="Elements\Player.cs" />

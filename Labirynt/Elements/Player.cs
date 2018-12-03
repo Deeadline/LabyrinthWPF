@@ -1,57 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace Labirynt.Elements
 {
     public class Player
     {
-        public Rectangle PlayerRectangle;
-        private int boardWidth;
-        private int boardHeight;
-
-        private Coordinate goal;
-        private List<Coordinate> obstaclePositions;
+        public GraphicRepresentation PlayerRepresentation { get; set; }
+        public Dimension LevelDimension { get; set; }
+        private readonly Coordinate _goal;
+        private readonly List<Coordinate> _obstaclePositions;
 
         public Player(Level level)
         {
-            PlayerRectangle = new Rectangle();
-            PlayerRectangle.Fill = Brushes.Orange;
-
-            this.obstaclePositions = level.ObstaclePositions;
-            this.goal = level.EndPosition;
-
-            this.boardWidth = level.SizeX;
-            this.boardHeight = level.SizeY;
+            PlayerRepresentation = new GraphicRepresentation(level.StartPosition, Brushes.DarkOrange);
+            LevelDimension = level.LevelDimension;
+            _obstaclePositions = level.ObstaclePositions;
+            _goal = level.EndPosition;
         }
 
-        public void Move(int dirX,int dirY)
+        public void Move(Coordinate moveCoordinate)
         {
-            int rowToSet = Grid.GetRow(PlayerRectangle) + dirY;
-            int colToSet = Grid.GetColumn(PlayerRectangle) + dirX;
 
-            if (colToSet < 0 || colToSet >= boardWidth)
+            var rowToSet = Grid.GetRow(PlayerRepresentation.Rectangle) + moveCoordinate.Y;
+            var colToSet = Grid.GetColumn(PlayerRepresentation.Rectangle) + moveCoordinate.X;
+
+            //Collision
+            if (CheckCollision(colToSet, rowToSet))
                 return;
+            PlayerRepresentation.Position.X = colToSet;
+            PlayerRepresentation.Position.Y = rowToSet;
+            //If not set new position
+            Redraw();
 
-            if (rowToSet < 0 || rowToSet >= boardHeight)
-                return;
+            //Check if win
+            CheckWin(colToSet, rowToSet);
+        }
 
-            for(int i = 0;i < obstaclePositions.Count;i++)
-            {
-                if (obstaclePositions[i].X == colToSet && obstaclePositions[i].Y == rowToSet)
-                    return;
-            }
+        private void Redraw()
+        {
+            Grid.SetColumn(PlayerRepresentation.Rectangle, PlayerRepresentation.Position.X);
+            Grid.SetRow(PlayerRepresentation.Rectangle, PlayerRepresentation.Position.Y);
+        }
 
-            Grid.SetColumn(PlayerRectangle, colToSet);
-            Grid.SetRow(PlayerRectangle, rowToSet);
+        private bool CheckCollision(int x, int y)
+        {
+            if (x < 0 || x >= LevelDimension.Width)
+                return true;
 
+            if (y < 0 || y >= LevelDimension.Height)
+                return true;
+            var f = _obstaclePositions.Any(t => t.X == x && t.Y == y);
+            return f;
+        }
 
-            if (colToSet == goal.X && rowToSet == goal.Y)
+        private void CheckWin(int x, int y)
+        {
+            if (x == _goal.X && y == _goal.Y)
             {
                 System.Diagnostics.Debug.WriteLine("Level finished");
             }
