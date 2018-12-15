@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Labirynt.Elements.Interface;
+
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Labirynt.Elements.Utils
@@ -7,7 +9,7 @@ namespace Labirynt.Elements.Utils
     {
         public Coordinate Coordinate { get; set; }
 
-        public bool CheckCollision(List<MazeElement> walls, Coordinate mazeSize)
+        public bool CheckCollision(List<IMazeElement> walls, Coordinate mazeSize)
         {
             if (Coordinate.X < 0 || Coordinate.X >= mazeSize.X)
                 return true;
@@ -15,17 +17,14 @@ namespace Labirynt.Elements.Utils
             if (Coordinate.Y < 0 || Coordinate.Y >= mazeSize.Y)
                 return true;
             var f = walls.Any(w =>
-                w.GraphicRepresentation.Position.X == Coordinate.X && w.GraphicRepresentation.Position.Y == Coordinate.Y);
+                w.GraphicRepresentation.Position.X == Coordinate.Y && w.GraphicRepresentation.Position.Y == Coordinate.X);
 
             return f;
         }
 
-        public void CheckWin(Coordinate endCoordinate)
+        public bool CheckWin(Coordinate endCoordinate)
         {
-            if (Coordinate.X == endCoordinate.X && Coordinate.Y== endCoordinate.Y)
-            {
-                System.Diagnostics.Debug.WriteLine("Level finished");
-            }
+            return Coordinate.X == endCoordinate.X && Coordinate.Y == endCoordinate.Y;
         }
     }
 }

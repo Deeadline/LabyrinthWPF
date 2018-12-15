@@ -56,6 +56,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SecondLevel.xaml.cs">
+      <DependentUpon>SecondLevel.xaml</DependentUpon>
+    </Compile>
+    <Page Include="SecondLevel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Resource Include="Levels\NormalMaze.txt" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -64,18 +72,29 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Elements\Door\IDoor.cs" />
+    <Compile Include="Elements\Door\MagicDoor.cs" />
+    <Compile Include="Elements\Door\NormalDoor.cs" />
+    <Compile Include="Elements\Ground\IGround.cs" />
+    <Compile Include="Elements\Ground\MagicGround.cs" />
+    <Compile Include="Elements\Ground\NormalGround.cs" />
     <Compile Include="Elements\Maze.cs" />
+    <Compile Include="Elements\Player\IPlayer.cs" />
+    <Compile Include="Elements\Player\Player.cs" />
     <Compile Include="Elements\Utils\Collision.cs" />
     <Compile Include="Elements\Utils\Coordinate.cs" />
     <Compile Include="Elements\Utils\Dimension.cs" />
     <Compile Include="Elements\Utils\GraphicRepresentation.cs" />
-    <Compile Include="Factory\Level.cs" />
-    <Compile Include="Elements\MazeElement.cs" />
-    <Compile Include="Factory\MazeElementManager.cs" />
-    <Compile Include="Elements\Player.cs" />
-    <Content Include="Levels\SampleLevel.txt" />
-    <Compile Include="Elements\Room.cs" />
-    <Compile Include="Elements\Wall.cs" />
+    <Compile Include="Elements\Wall\IWall.cs" />
+    <Compile Include="Elements\Wall\MagicWall.cs" />
+    <Compile Include="Elements\Wall\NormalWall.cs" />
+    <Compile Include="Factory\ElementsFactory\MagicMazeFactory.cs" />
+    <Compile Include="Factory\ElementsFactory\NormalMazeFactory.cs" />
+    <Compile Include="Elements\Interface\MazeElement.cs" />
+    <Compile Include="Factory\MainFactory\MazeAbstractFactory.cs" />
+    <Content Include="Levels\MagicMaze.txt" />
+    <Compile Include="Factory\MainFactory\MazeFactoryProducer.cs" />
+    <Compile Include="Levels\LevelGenerator.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

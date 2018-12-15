@@ -1,27 +1,26 @@
-﻿using System;
-using Labirynt.Elements.Utils;
+﻿using Labirynt.Elements.Utils;
+
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Labirynt.Elements
+namespace Labirynt.Elements.Player
 {
-    public class Player : MazeElement
+    public class Player : IPlayer
     {
         public Collision Collider { get; set; }
-        public override MazeElement Make(Coordinate coordinate)
+        public GraphicRepresentation GraphicRepresentation { get; set; }
+
+        public Player(Coordinate coordinate)
         {
-            return new Player
-            {
-                GraphicRepresentation = new GraphicRepresentation(coordinate, Brushes.DarkOrange),
-                Collider = new Collision()
-            };
+            GraphicRepresentation = new GraphicRepresentation(coordinate, Brushes.LightSteelBlue);
+            Collider = new Collision();
         }
 
         public Coordinate GetMoveCoordinates(int x, int y)
         {
             var colToSet = Grid.GetColumn(GraphicRepresentation.Rectangle) + x;
             var rowToSet = Grid.GetRow(GraphicRepresentation.Rectangle) + y;
-            Collider.Coordinate = new Coordinate(colToSet,rowToSet);
+            Collider.Coordinate = new Coordinate(colToSet, rowToSet);
             return Collider.Coordinate;
         }
 
@@ -35,6 +34,5 @@ namespace Labirynt.Elements
             Grid.SetColumn(GraphicRepresentation.Rectangle, GraphicRepresentation.Position.X);
             Grid.SetRow(GraphicRepresentation.Rectangle, GraphicRepresentation.Position.Y);
         }
-
     }
 }
