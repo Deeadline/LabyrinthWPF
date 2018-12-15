@@ -29,14 +29,6 @@ namespace Labirynt
             KeyDown += MainWindow_KeyDown;
         }
 
-        public MainWindow(string lvlName)
-        {
-            InitializeComponent();
-
-            Initialize(lvlName);
-
-            KeyDown += MainWindow_KeyDown;
-        }
         private void Initialize(string levelName)
         {
             var values = LevelGenerator.CreateLevel(levelName);
@@ -82,6 +74,12 @@ namespace Labirynt
                 {
                     MessageBox.Show("Wygrałeś");
                     Close();
+                }
+                else
+                {
+                    Grid.ColumnDefinitions.Clear();
+                    Grid.RowDefinitions.Clear();
+                    Initialize("MagicMaze.txt");
                 }
             }
              
