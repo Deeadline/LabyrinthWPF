@@ -10,7 +10,7 @@ namespace Labirynt.Elements.Door
 
         public IMazeElement Make(Coordinate coordinate)
         {
-            return new NormalDoor {GraphicRepresentation = new GraphicRepresentation(coordinate, Brushes.DarkOrange)};
+            return new MagicDoor {GraphicRepresentation = new GraphicRepresentation(coordinate, Brushes.DarkOrange)};
         }
     }
 }
